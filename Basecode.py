@@ -32,6 +32,109 @@ regions = list(set(df_Z.index.get_level_values(0)))
 products = list(set(df_Z.index.get_level_values(1)))
 FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
+
+
+# Calculate xout
+
+#%%
+df_xout = (df_Z.sum(axis=1) + df_Y.sum(axis=1)).fillna(0)
+df_xout
+
+#%%
+df_F
+
+
+#%%
+array_xout = df_xout.values
+
+array_xout
+
+# Calculate A-matrix
+
+#%%
+matrixZ = df_Z.values
+matrixA = matrixZ / array_xout
+
+
+#%% 
+
+# Fill NaN values in matrixA with 0
+matrixA = np.nan_to_num(matrixA, nan=0)
+
+
+
+# Calculate Leontief's inverse
+
+#%%
+matrixI = np.identity(matrixA.shape[0])
+matrixImA = (matrixI - matrixA)
+
+print(matrixImA)
+
+#%%
+
+# Check determinant of matrixImA before inverse
+print(np.linalg.det(matrixImA))
+
+
+#%%
+matrixL = np.linalg.inv(matrixImA)
+
+matrixL
+
+# Check that xout = L* (sum FD)
+
+#%%
+array_sFD = df_Y.sum(axis=1)        # it's not an array? 
+xout2 = matrixL@array_sFD           # Apparently, we can multiply matrix with a pandas.series (?!)
+print(xout2)                        # We get a numpy array! 
+
+#%%
+print(array_xout)
+
+
+
+
+# Calculate production-based intensities, array_PBi
+
+
+#%%
+
+####
+
+# F vs F_GHG below !! NB !!
+
+####
+
+
+#%%
+arrayF_GHGs = arrayF_GHGs.reshape(162,)
+array_PBi = arrayF_GHGs / array_xout      # These need to be in the same shape, hence above line
+print(array_PBi)
+
+# Calculate consumption-based intensities, array_CBi
+
+#%%
+array_CBi = array_PBi@matrixL
+print(array_CBi)
+
+# Note that the units are a bit nuts - usually we want intensities as kg/â‚¬. 
+# Here, we transform to meaningful units below. 
+
+# Calculate PBA and CBA emissions (Mt)
+
+#%%
+PBA_GHGs = arrayF_GHGs/1000000000
+CBA_GHGs = array_sFD*array_CBi/1000000000
+
+# Check that CBA and PBA give the same total amount of emissions at global level
+
+#%%
+CBA = CBA_GHGs.sum(axis=0)
+print(CBA)
+
+
+
 #%%
 
 # What do we do with the json files?
