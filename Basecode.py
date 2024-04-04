@@ -33,6 +33,13 @@ products = list(set(df_Z.index.get_level_values(1)))
 FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
 
+#%%
+df_Products = pd.DataFrame()
+df_Products['Products'] = products
+
+display(df_Products)
+
+df_Products.to_csv('Products_new.csv', index=0)
 
 # Calculate xout
 
@@ -85,9 +92,9 @@ matrixL
 # Check that xout = L* (sum FD)
 
 #%%
-array_sFD = df_Y.sum(axis=1)        # it's not an array? 
-xout2 = matrixL@array_sFD           # Apparently, we can multiply matrix with a pandas.series (?!)
-print(xout2)                        # We get a numpy array! 
+array_sFD = df_Y.sum(axis=1)
+xout2 = matrixL@array_sFD
+print(xout2)
 
 #%%
 print(array_xout)
@@ -102,10 +109,34 @@ print(array_xout)
 
 ####
 
-# F vs F_GHG below !! NB !!
+# F vs F_GHG below !! NB !! TESTING and Comparing PS7
 
 ####
 
+
+
+
+#%%
+display(unit_F)
+display(df_F)
+
+#%%
+
+PS7_F_GHG = pd.read_csv(r"Data/PS7/PS7_F_GHG.txt", sep='\t')
+
+PS7_arrayF_GHG = PS7_F_GHG.values
+print(PS7_arrayF_GHG.sum()/1000000000)
+
+
+
+
+
+
+#####
+
+# Løsningsforslag fortsetter under her
+
+#####
 
 #%%
 arrayF_GHGs = arrayF_GHGs.reshape(162,)
