@@ -34,12 +34,15 @@ FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
 
 #%%
-df_Products = pd.DataFrame()
-df_Products['Products'] = products
 
-display(df_Products)
+# Collecting product list as csv 
 
-df_Products.to_csv('Products_new.csv', index=0)
+#df_Products = pd.DataFrame()
+#df_Products['Products'] = products
+
+#display(df_Products)
+
+#df_Products.to_csv('Products_new.csv', index=0)
 
 # Calculate xout
 
