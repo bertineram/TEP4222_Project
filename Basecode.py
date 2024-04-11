@@ -28,10 +28,16 @@ unit_Z = pd.read_csv(r"Data/unit_Z.txt", sep='\t', header=0, index_col=[0,1])
 
 
 
+#%%
+
+#TEST
+df_F_test = df_F.sum(axis=0)
+
+df_F_test.loc['Norway']
 
 
-    ###################################################
-############    DEFINING df_F_NOR_ENERGY_TJ   ############
+###########################################################################
+##################      Defining df_F_NOR_ENERGY_TJ     ###################
     # *Datframe for relevant energy stressors in Norway 
     #  (unit = TJ, see explanation and approach below)
 
@@ -89,15 +95,21 @@ df_F_NOR_Energy_TJ = df_F_NOR.loc[unit_dataframes[unique_units[0]].index].sum(ax
 
 df_F_NOR_Energy_TJ
 
-# NB!!! These values does not seem accurate
+#%%
+# New attempt including all columns
+df_F_Energy_TJ = df_F.loc[unit_dataframes[unique_units[0]].index].sum(axis=0)
+
+df_F_Energy_TJ
+
+# NB!!! Neither of these dataframes seem 100% accurate
 # Several zero's (Ex: Private households with employed persons (95), Extra-territorial organizations and bodies)
 # High variation, everything from 0.13 to 12842.30
 
 # Why? 
 
 
-############    DEFINING df_F_NOR_ENERGY_TJ   ############
-    ###################################################
+############    Defining df_F_NOR_ENERGY_TJ   ############
+##########################################################
 
 
 #%%
@@ -130,8 +142,6 @@ df_xout_NOR
 array_xout = df_xout.values
 array_xout
 
-array_xout_NOR = df_xout_NOR.values
-
 #%%
 # Calculate A-matrix
 matrixZ = df_Z.values
@@ -139,7 +149,6 @@ matrixA = matrixZ / array_xout
 
 
 #%% 
-
 # Fill NaN values in matrixA with 0
 matrixA = np.nan_to_num(matrixA, nan=0)
 matrixA
@@ -149,18 +158,15 @@ matrixA
 # Calculate Leontief's inverse
 matrixI = np.identity(matrixA.shape[0])
 matrixImA = (matrixI - matrixA)
-
 matrixImA
 
 #%%
-
 # Check determinant of matrixImA before inverse
 print(np.linalg.det(matrixImA))
 
 
 #%%
 matrixL = np.linalg.inv(matrixImA)
-
 matrixL
 
 # Check that xout = L* (sum FD)
@@ -172,138 +178,49 @@ print(xout2)
 print(array_xout)
 
 
-
 ###################################################################################################
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+### ### ### ### ### ### ###  Calculating CBi for Norway and ENergy Footprint  ### ### ### ### ### ### ###
 
-### ### ### ### ### ### ###  Attempt to adapt to Energy and Norway  ### ### ### ### ### ### ###
-
-    ###     ###     ###     Code still under progress, debugging needed     ###     ###     ###
 
 #%%
-array_F_Energy = df_F_NOR_Energy_TJ.values
+array_F_Energy = df_F_Energy_TJ.values
 print(array_F_Energy.sum())
 # LF PS7: print(arrayF_GHGs.sum()/1000000000) why 10^x ?
 
 
-
 #%%
 # Calculate production-based intensities, array_PBi
-
-array_F_Energy = array_F_Energy.reshape(array_xout_NOR.shape)
-
-array_PBi = (array_F_Energy / array_xout_NOR)      # These need to be in the same shape, hence above line
-
+array_F_Energy = array_F_Energy.reshape(array_xout.shape)
+array_PBi = (array_F_Energy / array_xout)      # These need to be in the same shape, hence above line
 array_PBi = np.nan_to_num(array_PBi, nan=0)
-
 print(array_PBi)
-
-
-
-#%% 
-df_matrixL = pd.DataFrame(matrixL, index=df_F.columns, columns=df_F.columns)
-np_matrixL_NOR = df_matrixL["Norway"].to_numpy()
-
-np_matrixL_NOR
-
-#%%
-print(array_PBi.shape)
-print(np_matrixL_NOR.shape)
 
 #%%
 # Calculate consumption-based intensities, array_CBi
-array_CBi = array_PBi @ np_matrixL_NOR
+array_CBi = array_PBi @ matrixL
 print(array_CBi)
 
+#%%
+df_CBi = pd.DataFrame(array_CBi, index=df_F.columns, columns=(["CBi"]))
+df_CBi_NOR = df_CBi.loc['Norway']
+df_CBi_NOR # Norwegian Consumption Based intensities (unit?)
+
+#%%
+df_CBi_NOR.to_csv('CBi_NOR_test.csv', index=[0,1])
+
+
 # Note that the units are a bit nuts - usually we want intensities as kg/â‚¬. 
-# Here, we transform to meaningful units below. 
-
-    ### WHat are meaningful units for us???
-
-# Calculate PBA and CBA emissions (Mt)
-
-#%%
-PBA_GHGs = arrayF_GHGs/1000000000
-CBA_GHGs = array_sFD*array_CBi/1000000000
-
-# Check that CBA and PBA give the same total amount of emissions at global level
-
-#%%
-CBA = CBA_GHGs.sum(axis=0)
-print(CBA)
+# Here, we transform to meaningful units below.
+ 
+    ### What are the current units from before?
+    ### What are meaningful units for us???
 
 
 
-#%%
+
 
 # What do we do with the json files?
     # file_parameters.json
     # metadata.json
 
 
-# Old code below
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
-###################################################################################################
-
-
-#%%
-arrayF_GHGs = df_F_NOR_Energy_TJ.values
-print(arrayF_GHGs.sum())
-# LF: print(arrayF_GHGs.sum()/1000000000) why 10^x ?
-
-
-
-#%%
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-# This does not work
-
-arrayF_GHGs = arrayF_GHGs.reshape(array_xout.shape)
-array_PBi = arrayF_GHGs / array_xout      # These need to be in the same shape, hence above line
-print(array_PBi)
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-#%%
-
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-# New attempt, only Norway
-
-arrayF_GHGs = arrayF_GHGs.reshape(array_xout_NOR.shape)
-
-array_PBi = (arrayF_GHGs / array_xout_NOR)      # These need to be in the same shape, hence above line
-print(array_PBi)
-
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-#%% 
-matrixL.shape
-
-#%%
-# Calculate consumption-based intensities, array_CBi
-array_CBi = array_PBi@matrixL
-print(array_CBi)
-
-# Note that the units are a bit nuts - usually we want intensities as kg/â‚¬. 
-# Here, we transform to meaningful units below. 
-
-    ### WHat are meaningful units for us???
-
-# Calculate PBA and CBA emissions (Mt)
-
-#%%
-PBA_GHGs = arrayF_GHGs/1000000000
-CBA_GHGs = array_sFD*array_CBi/1000000000
-
-# Check that CBA and PBA give the same total amount of emissions at global level
-
-#%%
-CBA = CBA_GHGs.sum(axis=0)
-print(CBA)
-
-
-
-#%%
-
-# What do we do with the json files?
-    # file_parameters.json
-    # metadata.json
