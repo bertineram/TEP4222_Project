@@ -33,7 +33,6 @@ Urb_Cat
 #%%
 # Import calculated CBi for Energy Footprint in Norwegian households
 CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
-CBi
 
 
 #%%
@@ -89,6 +88,8 @@ CBi_Urb.iloc[11] = CBi.loc[CP12].values.sum()
 
 CBi_Urb
 
+CBi_Urb.to_csv('CBi_NOR_Urb.csv', index=[0,1])
+
 ###################################################################
 #####   CBi_Urb['Cities','Towns and suburbs','Rural areas']   #####
 
@@ -114,3 +115,8 @@ CBi_Urb['Rural areas'] = CBi_Urb['CB Energy Footprint'].values * Urbanization['R
 CBi_Urb
 
 
+#%%
+df_Y
+
+#%%
+Urbanization
