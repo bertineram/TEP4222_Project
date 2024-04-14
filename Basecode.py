@@ -26,7 +26,13 @@ df_F = pd.read_csv(r"Data/F.txt", sep='\t', header=[0,1], index_col=[0]) # Chang
 unit_F = pd.read_csv(r"Data/unit_F.txt", sep='\t', header=0, index_col=0)
 unit_Z = pd.read_csv(r"Data/unit_Z.txt", sep='\t', header=0, index_col=[0,1])
 
+#%%
+df_Z
 
+
+
+#%%
+df_Y
 
 #%%
 
@@ -48,6 +54,44 @@ display(unit_F)
 # Making a new F Dataframe with only Norway, and excluding rows with only zeros
 df_F_NOR = df_F["Norway"]
 df_F_NOR = df_F_NOR.loc[(df_F_NOR!=0).any(axis=1)]
+
+
+####################################################### TEST
+
+#%%
+All_unique_unit = unit_F.loc[:,'unit'].unique()
+All_unique_unit
+
+#%%
+Kp_stressor = unit_F.loc[unit_F.iloc[:,0] == '1000 p'] # Employment numbers in 1000 p
+Kp_stressor
+
+#%%
+Mhr_stressor = unit_F.loc[unit_F.iloc[:,0] == 'M.hr'] # Employment hours 
+Mhr_stressor
+
+#%%
+TJ_stressor = unit_F[unit_F.iloc[:, 0] == 'TJ']
+TJ_stressor
+
+
+########################################## TEST 
+
+
+
+
+#########################################################################
+### TEST only TJ, including all titles regardless of energy etc. :
+#%%
+print(test)
+
+
+
+##########################################################################
+
+
+
+
 
 #%%
 # Defining Energy relevant stressors in F 
@@ -202,11 +246,21 @@ print(array_CBi)
 
 #%%
 df_CBi = pd.DataFrame(array_CBi, index=df_F.columns, columns=(["CBi"]))
+
+df_CBi
+
+#%%
 df_CBi_NOR = df_CBi.loc['Norway']
 df_CBi_NOR # Norwegian Consumption Based intensities (unit?)
 
 #%%
 df_CBi_NOR.to_csv('CBi_NOR_test.csv', index=[0,1])
+
+
+#%%
+
+df_Y.loc[:,('Norway', 'Households consumption')]
+
 
 
 # Note that the units are a bit nuts - usually we want intensities as kg/â‚¬. 

@@ -16,13 +16,13 @@ import matplotlib as plt
 #%%
 # Import Eurostat Urbanization data
 Eurostat =  pd.read_excel(r"Data/Urbanization_Eurostat.xlsx", header=[0], index_col=[0]).fillna(0)
-Eurostat
+Eurostat # Unit Per mille = Parts per thousand = Promille
+Urb_sum = Eurostat.sum(axis=0)
+Urb_sum
 
 #%%
-
-Urbanization = Eurostat
-Urb_sum = Urbanization.sum(axis=0)
-Urb_sum
+Urbanization = Eurostat/1000 # Percentage
+Urbanization
 
 
 #%%
@@ -39,7 +39,8 @@ CBi
 #%%
 # Import product and classification category
 Category =  pd.read_excel(r"Data/Test_product_categories.xlsx", header=[0,1])#.fillna(0)
-
+Category
+#%%
 COICOP = Category.columns.get_level_values(0)
 COICOP
 
@@ -90,6 +91,20 @@ CBi_Urb
 
 ###################################################################
 #####   CBi_Urb['Cities','Towns and suburbs','Rural areas']   #####
+
+
+#%%
+
+CBi_sum = CBi_Urb.loc[:, 'CB Energy Footprint'].sum()
+CBi_row1 = Urbanization.iloc[0,:].values
+CBi_row2 = Urbanization.iloc[1,:].values
+
+y = np.array([CBi_sum, CBi_Urb.iloc[0, 0], CBi_Urb.iloc[1, 0]])
+A = np.array([[1,1,1], CBi_row1, CBi_row2])
+
+x = np.linalg.inv(A) @ y
+x
+
 
 #%%
 CBi_Urb['Cities'] = CBi_Urb['CB Energy Footprint'].values * Urbanization['Cities'].values
