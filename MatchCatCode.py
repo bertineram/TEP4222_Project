@@ -39,6 +39,7 @@ CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
 # Import product and classification category
 Category =  pd.read_excel(r"Data/Test_product_categories.xlsx", header=[0,1])#.fillna(0)
 Category
+
 #%%
 COICOP = Category.columns.get_level_values(0)
 COICOP
@@ -51,17 +52,13 @@ CBi_Urb
 
 
 #%%
-####################################################
-#####      CBi_Urb['CB Energy Footprint']      #####
+##################################################
+#####              CBi_Urb['CBi']            #####
 
-
-#%%
 # Picking out the first COICOP category to test before for loop below
-CP01 = Category.iloc[:, 0]
-CP01 = CP01.dropna('index')
-CP01
+    # CP01 = Category.iloc[:, 0]
+    # CP01 = CP01.dropna('index')
 
-#%%
 # For loop to make variables for each COICOP category in Eurostat
 for i in range(12):
     cp_name = 'CP{:02d}'.format(i+1)
@@ -71,34 +68,39 @@ for i in range(12):
 
 #%%
 # Summing up the relevant values for each COICOP category
+CBi_Urb = pd.DataFrame(index=COICOP, columns=['CBi'])
 
-#CBi_Urb.loc[('[CP01]', 'Food and non-alcoholic beverages')] = CBi.loc[CP01].values.sum()
-CBi_Urb.iloc[0] = CBi.loc[CP01].values.sum()
-CBi_Urb.iloc[1] = CBi.loc[CP02].values.sum()
-CBi_Urb.iloc[2] = CBi.loc[CP03].values.sum()
-CBi_Urb.iloc[3] = CBi.loc[CP04].values.sum()
-CBi_Urb.iloc[4] = CBi.loc[CP05].values.sum()
-CBi_Urb.iloc[5] = CBi.loc[CP06].values.sum()
-CBi_Urb.iloc[6] = CBi.loc[CP07].values.sum()
-CBi_Urb.iloc[7] = CBi.loc[CP08].values.sum()
-CBi_Urb.iloc[8] = CBi.loc[CP09].values.sum()
-CBi_Urb.iloc[9] = CBi.loc[CP10].values.sum()
-CBi_Urb.iloc[10] = CBi.loc[CP11].values.sum()
-CBi_Urb.iloc[11] = CBi.loc[CP12].values.sum()
+for i in range(1, 13):
+    cp = globals()[f"CP{i:02d}"]
+    CBi_Urb.iloc[i-1] = CBi.loc[cp].values.sum()
+
+
+
+######
+
+#%%
+
+CBi_Urb['CBi %'] = CBi_Urb['CBi']/(CBi_Urb['CBi'].sum())
 
 CBi_Urb
 
-CBi_Urb.to_csv('CBi_NOR_Urb.csv', index=[0,1])
+#######
 
+
+#%%
 ###################################################################
 #####   CBi_Urb['Cities','Towns and suburbs','Rural areas']   #####
+
+Urbanization
 
 
 #%%
 
-CBi_sum = CBi_Urb.loc[:, 'CB Energy Footprint'].sum()
+CBi_sum = CBi_Urb.loc[:, 'CBi'].sum()
 CBi_row1 = Urbanization.iloc[0,:].values
 CBi_row2 = Urbanization.iloc[1,:].values
+
+#%%
 
 y = np.array([CBi_sum, CBi_Urb.iloc[0, 0], CBi_Urb.iloc[1, 0]])
 A = np.array([[1,1,1], CBi_row1, CBi_row2])
@@ -108,15 +110,14 @@ x
 
 
 #%%
-CBi_Urb['Cities'] = CBi_Urb['CB Energy Footprint'].values * Urbanization['Cities'].values
-CBi_Urb['Towns and suburbs'] = CBi_Urb['CB Energy Footprint'].values * Urbanization['Towns and suburbs'].values
-CBi_Urb['Rural areas'] = CBi_Urb['CB Energy Footprint'].values * Urbanization['Rural areas'].values
+
+# NB: Dilemma, not accurate approach !
+
+CBi_Urb['Cities'] = CBi_Urb['CBi'].values * Urbanization['Cities'].values
+CBi_Urb['Towns and suburbs'] = CBi_Urb['CBi'].values * Urbanization['Towns and suburbs'].values
+CBi_Urb['Rural areas'] = CBi_Urb['CBi'].values * Urbanization['Rural areas'].values
 
 CBi_Urb
-
-
-#%%
-df_Y
 
 #%%
 Urbanization

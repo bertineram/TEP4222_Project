@@ -35,16 +35,31 @@ df_Y_Nor_HH = df_Y.loc[:, ('Norway', 'Households consumption')]
 df_Y_Nor_HH_by_sector = pd.DataFrame((df_Y_Nor_HH.groupby(level='sector').sum()))
 
 #%%
+regions = list(set(df_Z.index.get_level_values(0)))
+products = list(set(df_Z.index.get_level_values(1)))
+FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
-Test = pd.DataFrame(index=COICOP, columns=(['Final demand']))
+#%%
+df_Y_HH = df_Y.loc[:, (regions, 'Households consumption')]
 
-for i in range(1, 13):
-    cp = globals()[f"CP{i:02d}"]
-    Test.iloc[i-1] = df_Y_Nor_HH_by_sector.loc[cp].values.sum()
+########################################
+#%%
+df_Y_HH_CP = (index=(regions, COICOP), columns= df_Y_HH.columns)
+df_Y_HH_CP
+#%%
 
-Test
+# Making df_Y_HH_CP with COICOP categories  ### !!!
 
 
+#df_F_Urb = pd.DataFrame(index=COICOP, columns=(['stressor']))
+
+#for i in range(1, 13):
+#    cp = globals()[f"CP{i:02d}"]
+#    df_F_Urb.iloc[i-1] = F_by_sector.loc[cp].values.sum()
+
+
+
+#######################################
 
 #%%
 # Import product and classification category

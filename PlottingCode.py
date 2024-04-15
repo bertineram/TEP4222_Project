@@ -39,19 +39,6 @@ df = pd.DataFrame(Random, index=CBi_Urb.index, columns=CBi_Urb.columns)
 df
 
 
-#%%
-from matplotlib import colormaps
-list(colormaps)
-
-#%%
-
-
-ax = df.plot.bar(stacked=True, title='Consumption Based Energy Footprint - Norway')
-
-#ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
-handles, labels = ax.get_legend_handles_labels()
-ax.legend(handles[::-1], labels[::-1], title='Line', loc='upper left')
 
 ###############################################
 ######      Plotting with Seaborn        ######
@@ -60,33 +47,10 @@ ax.legend(handles[::-1], labels[::-1], title='Line', loc='upper left')
 import seaborn as sns
 
 # Apply the default theme
-sns.set_theme()
-
-# Load an example dataset
-tips = sns.load_dataset("tips")
-
-# Create a visualization
-sns.relplot(
-    data=tips,
-    x="total_bill", y="tip", col="time",
-    hue="smoker", style="smoker", size="size",
-)
+#sns.set_theme()
 
 #%%
-penguins = sns.load_dataset("penguins")
-sns.histplot(data=penguins, x="flipper_length_mm", hue="species", multiple="stack")
-
-#%%
-
-sns.histplot(data=df, x=df.index, hue="species", multiple="stack")
-
-#%%
-
-
-
-
-# colorblind
-# Spectral
+# colorblind, Spectral
 
 
 ax = df.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
@@ -99,4 +63,24 @@ ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), lo
 #plt.ylabel('UNIT')
 #plt.xlabel('Urbaization')
 plt.title('Consumption Based Energy Eootprint', fontsize=14) #fontstyle ='TNR'
+
+
+
+#%%
+CBi_new = pd.read_csv(r"NEw_CBi_NOR.csv", header=[0], index_col=[0])
+
+CBi_new
+
+#%%
+ax = CBi_new.plot(kind = 'bar', color= sns.color_palette('Spectral', n_colors=92))
+#plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
+
+
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
+
+#plt.ylabel('UNIT')
+#plt.xlabel('Urbaization')
+plt.title('Consumption Based Energy Eootprint', fontsize=14) #fontstyle ='TNR'
+
 
