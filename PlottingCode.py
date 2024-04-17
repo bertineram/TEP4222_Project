@@ -23,10 +23,6 @@ display(df2)
 display(df3)
 
 #%%
-# Making a new DataFrame
-    # Import finished dataset here instead 
-    # Ex: CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
-
 Category =  pd.read_excel(r"Data/1_product_categories.xlsx", header=[0,1])#.fillna(0)
 COICOP = Category.columns.get_level_values(0)
 COICOP
@@ -41,20 +37,20 @@ CBi_Urb
 # .pivot flip dataframe
 #%%
 Random = np.random.randint(low=0, high=100, size=(CBi_Urb.shape))
-df = pd.DataFrame(Random, index=CBi_Urb.index, columns=CBi_Urb.columns)
+#df = pd.DataFrame(Random, index=CBi_Urb.index, columns=CBi_Urb.columns)
 
 #%%
 df1
 
 #%%
+# "Pivoting" the table: (12,4) -> (3,12)
+df = pd.DataFrame(index=['Cities', 'Towns and suburbs', 'Rural areas'], columns=COICOP)
+
+df.loc['Cities'] = df3.loc[:,'Cities'].values
+df.loc['Towns and suburbs'] = df3.loc[:,'Towns and suburbs'].values
+df.loc['Rural areas'] = df3.loc[:,'Rural areas'].values
+
 df
-
-
-#%%
-Hei = pd.DataFrame(index=['Cities', 'Towns and suburbs', 'Rural areas'], columns=COICOP)
-Hei
-
-
 
 #%%
 ###############################################
@@ -62,33 +58,22 @@ Hei
 
 #%%
 import seaborn as sns
+#%%
 
+# Apply the default theme       # ?
+sns.set_theme() # y / n ?       # ?
 
-
-ax = df1.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
+ax = df.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
 #plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
-
 
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
 
 #plt.ylabel('UNIT')
 #plt.xlabel('Urbaization')
-plt.title('Consumption Based Energy Footprint', fontsize=14) #fontstyle ='TNR'
+#plt.title('Consumption Based Energy Footprint', fontsize=14) #fontstyle ='TNR'
 
 
-
-
-
-
-
-
-
-
-
-
-# Apply the default theme
-#sns.set_theme()
 
 #%%
 # colorblind, Spectral

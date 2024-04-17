@@ -78,11 +78,6 @@ display(unit_dataframes[unique_units[2]]) # Water use in maufacturing for electr
 
 #%%
 # We continue with TJ as unit as this seems most accurate
-df_F_NOR_Energy_TJ = df_F_NOR.loc[unit_dataframes[unique_units[0]].index].sum(axis=0)
-df_F_NOR_Energy_TJ
-
-#%%
-# New attempt including all columns
 df_F_Energy_TJ = df_F.loc[unit_dataframes[unique_units[0]].index].sum(axis=0)
 df_F_Energy_TJ
 
