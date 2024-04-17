@@ -28,12 +28,6 @@ unit_F = pd.read_csv(r"Data/unit_F.txt", sep='\t', header=0, index_col=0)
 unit_Z = pd.read_csv(r"Data/unit_Z.txt", sep='\t', header=0, index_col=[0,1])
 
 
-
-#%%
-df_Y_Nor_HH = df_Y.loc[:, ('Norway', 'Households consumption')]
-
-df_Y_Nor_HH_by_sector = pd.DataFrame((df_Y_Nor_HH.groupby(level='sector').sum()))
-
 #%%
 regions = list(set(df_Z.index.get_level_values(0)))
 products = list(set(df_Z.index.get_level_values(1)))
