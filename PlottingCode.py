@@ -12,14 +12,22 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+#%%
+df1 = pd.read_csv(r"1_CBi_Urb.csv", header=[0], index_col=[0])
+df2 = pd.read_csv(r"2_CBi_Urb.csv", header=[0], index_col=[0])
+df3 = pd.read_csv(r"3_CBi_Urb.csv", header=[0], index_col=[0])
+
+#%%
+display(df1)
+display(df2)
+display(df3)
 
 #%%
 # Making a new DataFrame
     # Import finished dataset here instead 
     # Ex: CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
 
-Category =  pd.read_excel(r"Data/Test_product_categories.xlsx", header=[0,1])#.fillna(0)
-
+Category =  pd.read_excel(r"Data/1_product_categories.xlsx", header=[0,1])#.fillna(0)
 COICOP = Category.columns.get_level_values(0)
 COICOP
 
@@ -36,15 +44,48 @@ Random = np.random.randint(low=0, high=100, size=(CBi_Urb.shape))
 df = pd.DataFrame(Random, index=CBi_Urb.index, columns=CBi_Urb.columns)
 
 #%%
+df1
+
+#%%
 df
 
 
+#%%
+Hei = pd.DataFrame(index=['Cities', 'Towns and suburbs', 'Rural areas'], columns=COICOP)
+Hei
 
+
+
+#%%
 ###############################################
 ######      Plotting with Seaborn        ######
 
 #%%
 import seaborn as sns
+
+
+
+ax = df1.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
+#plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
+
+
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
+
+#plt.ylabel('UNIT')
+#plt.xlabel('Urbaization')
+plt.title('Consumption Based Energy Footprint', fontsize=14) #fontstyle ='TNR'
+
+
+
+
+
+
+
+
+
+
+
 
 # Apply the default theme
 #sns.set_theme()
@@ -53,7 +94,7 @@ import seaborn as sns
 # colorblind, Spectral
 
 
-ax = df.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
+ax = df1.plot(kind = 'bar', stacked = True, color= sns.color_palette('Spectral', n_colors=12))
 #plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
 
 
@@ -62,17 +103,17 @@ ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), lo
 
 #plt.ylabel('UNIT')
 #plt.xlabel('Urbaization')
-plt.title('Consumption Based Energy Eootprint', fontsize=14) #fontstyle ='TNR'
+plt.title('Consumption Based Energy Footprint', fontsize=14) #fontstyle ='TNR'
 
 
 
 #%%
-CBi_new = pd.read_csv(r"NEw_CBi_NOR.csv", header=[0], index_col=[0])
+CBi_new = pd.read_csv(r"1_CBi_Urb.csv", header=[0], index_col=[0])
 
 CBi_new
 
 #%%
-ax = CBi_new.plot(kind = 'bar', color= sns.color_palette('Spectral', n_colors=92))
+ax = df1.plot(kind = 'bar', color= sns.color_palette('Spectral', n_colors=12))
 #plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
 
 
@@ -81,6 +122,6 @@ ax.legend(handles[::-1], labels[::-1], title='COICOP', bbox_to_anchor=(1, 1), lo
 
 #plt.ylabel('UNIT')
 #plt.xlabel('Urbaization')
-plt.title('Consumption Based Energy Eootprint', fontsize=14) #fontstyle ='TNR'
+plt.title('Consumption Based Energy Footprint', fontsize=14) #fontstyle ='TNR'
 
 

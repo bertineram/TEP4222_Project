@@ -44,8 +44,8 @@ Expenditure
 
 
 #%%
-##################################################
-#####              CBi_Urb['CBi']            #####
+###################################################################
+####                      CBi_Urb['CBi']                       ####
 
 # Picking out the first COICOP category to test before for loop below
     # CP01 = Category.iloc[:, 0]
@@ -71,8 +71,8 @@ for i in range(1, 13):
 CBi_Urb
 
 #%%
-###################################################################
-#####   CBi_Urb['Cities','Towns and suburbs','Rural areas']   #####
+########################################################################
+####       CBi_Urb['Cities','Towns and suburbs','Rural areas']      ####
 
 #%%
 
@@ -81,8 +81,3 @@ CBi_Urb['Towns and suburbs'] = CBi_Urb['CBi'].values * Expenditure['Towns and su
 CBi_Urb['Rural areas'] = CBi_Urb['CBi'].values * Expenditure['Rural areas'].values
 
 CBi_Urb
-
-
-
-#%%
-# Test plotting for different product category distributions

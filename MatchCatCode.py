@@ -10,7 +10,7 @@
 # Import packages
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 
 #%%
@@ -33,7 +33,7 @@ Urb_Cat
 #%%
 # Import calculated CBi for Energy Footprint in Norwegian households
 CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
-
+CBi
 
 #%%
 # Import product and classification category
