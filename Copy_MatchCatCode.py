@@ -10,16 +10,14 @@
 # Import packages
 import pandas as pd
 import numpy as np
-import matplotlib as plt
 
 
 #%%
 # Import calculated CBi for Energy Footprint in Norwegian households
-#CBi = pd.read_excel(r"CBi_NOR_test.xlsx", header=[0], index_col=[0])
 CBi = pd.read_csv(r"Data/CBi_NOR.csv", header=[0], index_col=[0])
 
 # Import overview of COICOP and production categories
-Category =  pd.read_excel(r"Data/Product_categories.xlsx", header=[0,1])#.fillna(0)
+Category =  pd.read_excel(r"Data/3_Product_categories.xlsx", header=[0,1])#.fillna(0)
 COICOP = Category.columns.get_level_values(0)
 
 #%%
@@ -81,3 +79,6 @@ CBi_Urb['Towns and suburbs'] = CBi_Urb['CBi'].values * Expenditure['Towns and su
 CBi_Urb['Rural areas'] = CBi_Urb['CBi'].values * Expenditure['Rural areas'].values
 
 CBi_Urb
+
+#%%
+CBi_Urb.to_csv('3_CBi_Urb.csv', index=[0,1])

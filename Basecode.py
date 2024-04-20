@@ -30,6 +30,9 @@ products = list(set(df_Z.index.get_level_values(1)))
 FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
 #%%
+len(products)
+
+#%%
 # Final demand for Household consumption
 df_Y_HH = df_Y.loc[:, (regions, 'Households consumption')]
 df_Y_HH

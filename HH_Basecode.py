@@ -27,6 +27,9 @@ products = list(set(df_Z.index.get_level_values(1)))
 FD_categories = list(set(df_Y.columns.get_level_values(1)))
 
 #%%
+len(unit_F.iloc[:,0].unique())
+
+#%%
 df_Y_HH = df_Y.loc[:, (regions, 'Households consumption')]
 df_Y_HH
 
@@ -80,6 +83,7 @@ display(unit_dataframes[unique_units[2]]) # Water use in maufacturing for electr
 # We continue with TJ as unit as this seems most accurate
 df_F_Energy_TJ = df_F.loc[unit_dataframes[unique_units[0]].index].sum(axis=0)
 df_F_Energy_TJ
+
 
 ###########################################################
 ###                 Calculating x, A and L              ###
