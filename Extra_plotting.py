@@ -15,32 +15,26 @@ from matplotlib import rcParams
 import seaborn as sns
 
 #%%
-df1 = pd.read_csv(r"1_CBi_Urb.csv", header=[0], index_col=[0])
-df2 = pd.read_csv(r"2_CBi_Urb.csv", header=[0], index_col=[0])
-df3 = pd.read_csv(r"3_CBi_Urb.csv", header=[0], index_col=[0])
+# Picking out the Energy Footprint for the Housing category [MWh]
+EF = pd.read_csv(r"CBi_Urb.csv", header=[0], index_col=[0])
+EF_CP04 = pd.DataFrame(EF.iloc[3, [1,2,3]].values, index=['Cities', 'Towns and suburbs', 'Rural areas'], columns=['CP04'])
+display(EF_CP04)
 
-display(df1)
-display(df2)
-display(df3)
 
-#%%
-CBi_NOR = pd.read_csv(r"Data/CBi_NOR.csv", header=[0], index_col=[0])
-CBi_NOR
+
+EF_CP04.iloc[0,:].values
 
 #%%
-Category =  pd.read_excel(r"Data/3_product_categories.xlsx", header=[0,1])#.fillna(0)
-COICOP = Category.columns.get_level_values(0)
+# Import SSB dataset for average price per sqm for the different levels of ubranization
+SSB_sqm_price= pd.read_excel(r"Data/SSB_Sqm_12_22.xlsx", header=0, index_col=[0])
+SSB_sqm_price
 
 #%%
-# "Pivoting" the table: (12,4) -> (3,12)
-df = pd.DataFrame(index=['Cities', 'Towns and suburbs', 'Rural areas'], columns=COICOP)
-
-df.loc['Cities'] = df3.loc[:,'Cities'].values
-df.loc['Towns and suburbs'] = df3.loc[:,'Towns and suburbs'].values
-df.loc['Rural areas'] = df3.loc[:,'Rural areas'].values
-
+# Ef [MWh] / Average price per sqm [Euro/m2]
+df = pd.DataFrame(index=SSB_sqm_price.index, columns=EF_CP04.index)
+df.loc[2012, :] = EF_CP04.iloc[0,:].values / SSB_sqm_price.loc[2012, :]
+df.loc[2022, :] = EF_CP04.iloc[0,:].values / SSB_sqm_price.loc[2022, :]
 df
-
 
 #%%###################################################################################
 
@@ -48,151 +42,71 @@ df
 
 ######################################################################################
 
+# Energy Footprint / (Average price per m2) [MWh/(Euro/m2)]
 
         # print(sns.color_palette("pastel6").as_hex())     # see colors as hex for indvidual plots
-
-
-# Apply the default theme       # ?
-#sns.set_theme() # y / n ?       # ?
 
 # Setting the figure size and font adjustments
 rcParams['figure.figsize'] = 8, 10 # Inches
 rcParams['font.family'] = 'Times New Roman'
 rcParams['font.size'] = 12
 
-
-
-#%%##################################################################
-###                     Horizontal bar plot                       ###
-
-# Setting the figure size and font adjustments
-rcParams['figure.figsize'] = 10, 4.2 # Inches
-rcParams['font.family'] = 'Times New Roman'
-rcParams['font.size'] = 12        # does not work on axes and legend ?
-
-
-# Create the horizontal bar plot (barh (horizontal) vs bar (vertical))
-ax = df.plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-
-# PLot legend outside of the plot
-plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=12)
-
-# Set font size for axes labels
-ax.xaxis.label.set_size(12)
-ax.yaxis.label.set_size(12)
-
-#plt.ylabel('UNIT')
-#plt.xlabel('---')
-#plt.title('Consumption Based Energy Footprint', fontsize=14) #? # Title on plot or in text document?  # ?
-
-# Save the plot as a PDF file
-#plt.savefig('TEST_bar_plot.pdf', dpi=300, bbox_inches='tight')
-
-plt.show()
-
-
+# color nr. 2 is the original color in the first result plot 
+color_palette = ['#23b23c', '#33FF57', '#84ff9a'] 
 
 #%%################################################################
 ###                     Vertical bar plot                       ###
 
-rcParams['figure.figsize'] = 10, 10
+rcParams['figure.figsize'] = 8, 4
 
-ax = df3.plot(kind = 'bar', stacked = True)#, color= sns.color_palette('colorblind', n_colors=3))
+ax = df.plot(kind = 'bar', color=color_palette)#, color= sns.color_palette('colorblind', n_colors=3))
 
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles[::-1], labels[::-1], title='Level of urbanization', bbox_to_anchor=(1, 1), loc=2, borderaxespad=0, fontsize=14)
 
-#plt.ylabel('UNIT')
+plt.yticks(np.arange(0, 6, 1.0))
+
+# Rotating X-axis labels
+plt.xticks(rotation = 360)
+
+plt.ylabel('MWh / (Euro / $m^2$)')
+
+plt.show()
+
 #plt.xlabel('---')
-plt.title('Consumption Based Energy Footprint', fontsize=12) #fontstyle ='TNR'
+#plt.title('', fontsize=12)
 
+#%%################################################################
+###                     Vertical bar plot                       ###
+sns.set_style("whitegrid")
 
+plt.rcParams['figure.figsize'] = 8, 4
 
-#%%############################################################################################
-###                             Plotting the 92 Exiobase categories                         ###
+# Determine the number of bars
+n_bars = df.shape[0]
 
-CBi = CBi_NOR.drop(index=['Inland water transportation services', 'Nuclear fuel'])
-CBi
+# Width of each bar
+bar_width = 0.5
 
-#%%
-# Set the size of the figure
-rcParams['figure.figsize'] = 8, 10 # Inches
-rcParams['font.family'] = 'Times New Roman'
-rcParams['font.size'] = 12        # does not work on axes and legend ?
+# Plotting the bars
+ax = df.plot(kind='bar', color=color_palette, width=bar_width)
 
-# Create the horizontal bar plot (barh (horizontal) vs bar (vertical))
-ax = CBi.sort_values(by=['CBi'], ascending=True).plot(kind='barh', color='red')#, color=sns.color_palette('Spectral', n_colors=12))
+# Remove vertical grid lines
+ax.grid(axis='x', linestyle='-')
 
-# Set font size for axes labels
-ax.xaxis.label.set_size(12)
-ax.yaxis.label.set_size(12)
+# Moving the legend to below the plot
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles, labels, bbox_to_anchor=(0.5, -0.15), loc='upper center', borderaxespad=0, fontsize=12, ncol=len(labels))
 
-plt.xlabel('Consumption Based index (TJ/M.Eur)')
-#plt.ylabel('---')
-#plt.title('Consumption Based Energy Footprint', fontsize=14) #? # Title on plot or in text document?  # ?
+# Adjusting y-ticks
+plt.yticks(np.arange(0, 6, 1.0))
 
-# Save the plot as a PDF file
-#plt.savefig('TEST_bar_plot.pdf', dpi=300, bbox_inches='tight')
+# Rotating X-axis labels
+plt.xticks(rotation=360)
+
+plt.ylabel('MWh / (Euro / $m^2$)')
+
+plt.tight_layout()  # Adjust layout to prevent clipping of labels
 
 plt.show()
 
-
-
-#%%###########################################################################################
-###                           Plotting each category [TJ / M. Eur]                         ###
-
-# For loop to make variables for each COICOP category in Eurostat
-for i in range(12):
-    cp_name = 'CP{:02d}'.format(i+1)
-    cp_variable = Category.iloc[:, i]
-    globals()[cp_name] = cp_variable.dropna('index')
-
-#%%
-ax = CBi.loc[CP01].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP02].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-
-#%%
-ax = CBi.loc[CP03].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP04].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP05].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP06].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP07].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-
-#%%
-ax = CBi.loc[CP08].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP09].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP10].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP11].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
-
-#%%
-ax = CBi.loc[CP12].sort_values(by=['CBi'], ascending=True).plot(kind='barh', stacked=True, color=sns.color_palette('Spectral', n_colors=12))
-plt.show()
